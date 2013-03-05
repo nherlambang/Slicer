@@ -199,7 +199,6 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     slicerCloseCrashBug2590.py
     ViewControllersSliceInterpolationBug1926.py  
     RSNA2012ProstateDemo.py
-    JRC2013Vis.py
     )
 
   set(KIT_PYTHON_RESOURCES
