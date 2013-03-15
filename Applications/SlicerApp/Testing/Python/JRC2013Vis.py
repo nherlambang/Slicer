@@ -274,8 +274,9 @@ class JRC2013VisTest(unittest.TestCase):
     # first, get the data - a zip file of dicom data
     #
     import urllib
-    downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=8610', 'dicom.zip'),
+    """ TODO: Replace url with pre-populated DICOM database zip file download link """
+    downloads = ( 
+        ('http://slicer.kitware.com/midas3/download?items=8610', 'dicom-db.zip'),
         )
 
     self.delayDisplay("Downloading")
@@ -304,13 +305,18 @@ class JRC2013VisTest(unittest.TestCase):
       dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
       dicomWidget.onDatabaseDirectoryChanged(tempDatabaseDirectory)
 
-      self.delayDisplay('Importing DICOM')
+      self.delayDisplay('Retrieve DICOM')
       mainWindow = slicer.util.mainWindow()
       mainWindow.moduleSelector().selectModule('DICOM')
       dicomWidget.dicomApp.suspendModel()
-      indexer = ctk.ctkDICOMIndexer()
-      indexer.addDirectory(slicer.dicomDatabase, dicomFilesDirectory, None)
-      indexer.waitForImportFinished()
+      dicomRetrieve = ctk.ctkDICOMRetrieve()
+      dicomRetrieve.setKeepAssociationOpen(True)
+      dicomRetrieve.setDatabase(slicer.dicomDatabase)
+      dicomRetrieve.setCallingAETitle('SlicerAE')
+      dicomRetrieve.setCalledAETitle('DCMTK')
+      dicomRetrieve.setPort(12345)
+      dicomRetrieve.setHost('localhost')
+      dicomRetrieve.getStudy('1.2.124.113932.1.170.223.162.178.20050502.160340.12640015');
       dicomWidget.dicomApp.resumeModel()
       dicomWidget.detailsPopup.open()
       # click on the first row of the tree
