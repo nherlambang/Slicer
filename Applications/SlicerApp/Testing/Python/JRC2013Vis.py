@@ -305,6 +305,13 @@ class JRC2013VisTest(unittest.TestCase):
       dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
       dicomWidget.onDatabaseDirectoryChanged(tempDatabaseDirectory)
 
+      self.delayDisplay('Start Local DICOM Q/R SCP')
+      import subprocess
+      configFilePath = dicomFilesDirectory + '/dicom-db/dcmqrscp.cfg'
+      processCurrentPath = dicomFilesDirectory + '/dicom-db/'
+      args = ('dcmqrscp', '-c', configFilePath)
+      popen = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=processCurrentPath)
+
       self.delayDisplay('Retrieve DICOM')
       mainWindow = slicer.util.mainWindow()
       mainWindow.moduleSelector().selectModule('DICOM')
@@ -318,6 +325,7 @@ class JRC2013VisTest(unittest.TestCase):
       dicomRetrieve.setHost('localhost')
       dicomRetrieve.getStudy('1.2.124.113932.1.170.223.162.178.20050502.160340.12640015');
       dicomWidget.dicomApp.resumeModel()
+      popen.kill()
       dicomWidget.detailsPopup.open()
       # click on the first row of the tree
       index = dicomWidget.tree.indexAt(qt.QPoint(0,0))
