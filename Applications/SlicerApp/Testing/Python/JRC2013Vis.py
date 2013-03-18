@@ -316,16 +316,19 @@ class JRC2013VisTest(unittest.TestCase):
         '/../DCMTK-build/bin',
         )
       
-      dcmqrscpExe = None
+      dcmqrscpExePath = None
+      dcmqrscpExeName = '/dcmqrscp'
+      if slicer.app.os == 'win':
+        dcmqrscpExeName = dcmqrscpExeName + '.exe'
       for path in dcmqrscpExeOptions:
-        testPath = slicer.app.slicerHome + path + '/dcmqrscp'
+        testPath = slicer.app.slicerHome + path + dcmqrscpExeName
         if os.path.exists(testPath):
-          dcmqrscpExe = testPath
+          dcmqrscpExePath = testPath
           break
-      if not dcmqrscpExe:
+      if not dcmqrscpExePath:
         raise( UserWarning("Could not find dcmqrscp executable") )
       
-      args = (dcmqrscpExe, '-c', configFilePath)  
+      args = (dcmqrscpExePath, '-c', configFilePath)  
       popen = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=processCurrentPath)
 
       self.delayDisplay('Retrieve DICOM')
