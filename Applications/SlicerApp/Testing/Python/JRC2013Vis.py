@@ -274,9 +274,8 @@ class JRC2013VisTest(unittest.TestCase):
     # first, get the data - a zip file of dicom data
     #
     import urllib
-    """ TODO: Replace url with pre-populated DICOM database zip file download link """
     downloads = ( 
-        ('http://slicer.kitware.com/midas3/download?items=8610', 'dicom-db.zip'),
+        ('http://slicer.kitware.com/midas3/download?items=18040', 'dicom-db.zip'),
         )
 
     self.delayDisplay("Downloading")
