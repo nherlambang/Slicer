@@ -307,9 +307,26 @@ class JRC2013VisTest(unittest.TestCase):
 
       self.delayDisplay('Start Local DICOM Q/R SCP')
       import subprocess
+      import os
       configFilePath = dicomFilesDirectory + '/dicom-db/dcmqrscp.cfg'
       processCurrentPath = dicomFilesDirectory + '/dicom-db/'
-      args = ('dcmqrscp', '-c', configFilePath)
+      
+      dcmqrscpExeOptions = (
+        '/bin', 
+        '/../CTK-build/CMakeExternals/Install/bin',
+        '/../DCMTK-build/bin',
+        )
+      
+      dcmqrscpExe = None
+      for path in dcmqrscpExeOptions:
+        testPath = slicer.app.slicerHome + path + '/dcmqrscp'
+        if os.path.exists(testPath):
+          dcmqrscpExe = testPath
+          break
+      if not dcmqrscpExe:
+        raise( UserWarning("Could not find dcmqrscp executable") )
+      
+      args = (dcmqrscpExe, '-c', configFilePath)  
       popen = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=processCurrentPath)
 
       self.delayDisplay('Retrieve DICOM')
