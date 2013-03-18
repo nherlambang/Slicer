@@ -313,7 +313,7 @@ class JRC2013VisTest(unittest.TestCase):
       dcmqrscpExeOptions = (
         '/bin', 
         '/../CTK-build/CMakeExternals/Install/bin',
-        '/../DCMTK-build/bin',
+        '/../DCMTK-install/bin',
         )
       
       dcmqrscpExePath = None
