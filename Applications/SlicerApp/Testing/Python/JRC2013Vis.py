@@ -70,6 +70,12 @@ class JRC2013VisWidget:
     self.layout.addWidget(self.reloadAndTestButton)
     self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
 
+    # start/stop DICOM peer
+    self.startStopDicomPeerButton = qt.QPushButton("Start/Stop DICOM peer")
+    self.startStopDicomPeerButton.setCheckable(True)
+    self.layout.addWidget(self.startStopDicomPeerButton)
+    self.startStopDicomPeerButton.connect('toggled(bool)', self.onStartStopDicomPeer)
+
     # Collapsible button
     testsCollapsibleButton = ctk.ctkCollapsibleButton()
     testsCollapsibleButton.text = "A collapsible button"
@@ -153,6 +159,58 @@ class JRC2013VisWidget:
     evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
     tester = eval(evalString)
     tester.runTest()
+  
+  def onStartStopDicomPeer(self,flag):
+    if flag:
+      self.startStopDicomPeerButton.setEnabled(False)
+      downloads = ( 
+        ('http://slicer.kitware.com/midas3/download?items=18040', 'dicom-db.zip'),
+        )
+      print 'Downloading'
+      
+      import os
+      import urllib
+      for url,name in downloads:
+        filePath = slicer.app.temporaryPath + '/' + name
+        if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
+          print 'Requesting download %s from %s...\n' % (name, url)
+          urllib.urlretrieve(url, filePath)
+      print 'Finished with download'
+ 
+      print 'Unzipping'
+      dicomFilesDirectory = slicer.app.temporaryPath + '/dicomFiles'
+      qt.QDir().mkpath(dicomFilesDirectory)
+      slicer.app.applicationLogic().Unzip(filePath, dicomFilesDirectory)
+    
+      import subprocess
+      configFilePath = dicomFilesDirectory + '/dicom-db/dcmqrscp.cfg'
+      processCurrentPath = dicomFilesDirectory + '/dicom-db/'
+      
+      dcmqrscpExeOptions = (
+        '/bin', 
+        '/../CTK-build/CMakeExternals/Install/bin',
+        '/../DCMTK-build/bin',
+        )
+      
+      dcmqrscpExePath = None
+      dcmqrscpExeName = '/dcmqrscp'
+      if slicer.app.os == 'win':
+        dcmqrscpExeName = dcmqrscpExeName + '.exe'
+      for path in dcmqrscpExeOptions:
+        testPath = slicer.app.slicerHome + path + dcmqrscpExeName
+        if os.path.exists(testPath):
+          dcmqrscpExePath = testPath
+          break
+      if not dcmqrscpExePath:
+        raise( UserWarning("Could not find dcmqrscp executable") )
+      
+      args = (dcmqrscpExePath, '-c', configFilePath)
+      print 'Start DICOM peer'
+      self.popen = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=processCurrentPath)
+      self.startStopDicomPeerButton.setEnabled(True)
+    else:
+      print 'Stop DICOM peer'
+      self.popen.kill()
 
 #
 # JRC2013VisLogic
