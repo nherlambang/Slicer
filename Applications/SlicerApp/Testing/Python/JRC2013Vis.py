@@ -174,7 +174,7 @@ class JRC2013VisWidget:
       val = msgBox.exec_()
       if(val == qt.QMessageBox.Yes):
         print 'Yes'
-        dicomFilesDirectory = qt.QFileDialog.getExistingDirectory(None, 'Select DCMTK tutorial1_dcmtk-db directory')
+        dicomFilesDirectory = qt.QFileDialog.getExistingDirectory(None, 'Select DCMTK dataset1_dcmtk-db directory')
         configFilePath = dicomFilesDirectory + '/dcmqrscp.cfg'
         processCurrentPath = dicomFilesDirectory
       else:
