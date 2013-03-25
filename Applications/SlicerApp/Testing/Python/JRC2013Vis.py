@@ -162,30 +162,40 @@ class JRC2013VisWidget:
   
   def onStartStopDicomPeer(self,flag):
     if flag:
-      self.startStopDicomPeerButton.setEnabled(False)
-      downloads = ( 
-        ('http://slicer.kitware.com/midas3/download?items=18040', 'dicom-db.zip'),
-        )
-      print 'Downloading'
-      
       import os
-      import urllib
-      for url,name in downloads:
-        filePath = slicer.app.temporaryPath + '/' + name
-        if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-          print 'Requesting download %s from %s...\n' % (name, url)
-          urllib.urlretrieve(url, filePath)
-      print 'Finished with download'
- 
-      print 'Unzipping'
+      self.startStopDicomPeerButton.setEnabled(False)
       dicomFilesDirectory = slicer.app.temporaryPath + '/dicomFiles'
-      qt.QDir().mkpath(dicomFilesDirectory)
-      slicer.app.applicationLogic().Unzip(filePath, dicomFilesDirectory)
-    
-      import subprocess
       configFilePath = dicomFilesDirectory + '/dicom-db/dcmqrscp.cfg'
       processCurrentPath = dicomFilesDirectory + '/dicom-db/'
+
+      msgBox = qt.QMessageBox()
+      msgBox.setText('Do you want to choose local DCMTK database folder?')
+      msgBox.setStandardButtons(qt.QMessageBox.Yes | qt.QMessageBox.No)
+      val = msgBox.exec_()
+      if(val == qt.QMessageBox.Yes):
+        print 'Yes'
+        dicomFilesDirectory = qt.QFileDialog.getExistingDirectory(None, 'Select DCMTK tutorial1_dcmtk-db directory')
+        configFilePath = dicomFilesDirectory + '/dcmqrscp.cfg'
+        processCurrentPath = dicomFilesDirectory
+      else:
+        downloads = ( 
+          ('http://slicer.kitware.com/midas3/download?items=18040', 'dicom-db.zip'),
+          )
+        print 'Downloading'
       
+        import urllib
+        for url,name in downloads:
+          filePath = slicer.app.temporaryPath + '/' + name
+          if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
+            print 'Requesting download %s from %s...\n' % (name, url)
+            urllib.urlretrieve(url, filePath)
+        print 'Finished with download'
+ 
+        print 'Unzipping'
+        qt.QDir().mkpath(dicomFilesDirectory)
+        slicer.app.applicationLogic().Unzip(filePath, dicomFilesDirectory)
+    
+      import subprocess
       dcmqrscpExeOptions = (
         '/bin', 
         '/../CTK-build/CMakeExternals/Install/bin',
