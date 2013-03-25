@@ -164,9 +164,9 @@ class JRC2013VisWidget:
     if flag:
       import os
       self.startStopDicomPeerButton.setEnabled(False)
-      dicomFilesDirectory = slicer.app.temporaryPath + '/dicomFiles'
-      configFilePath = dicomFilesDirectory + '/dicom-db/dcmqrscp.cfg'
-      processCurrentPath = dicomFilesDirectory + '/dicom-db/'
+      dicomFilesDirectory = slicer.app.temporaryPath
+      configFilePath = dicomFilesDirectory + '/Dcmtk-db/dcmqrscp.cfg'
+      processCurrentPath = dicomFilesDirectory + '/Dcmtk-db/'
 
       msgBox = qt.QMessageBox()
       msgBox.setText('Do you want to choose local DCMTK database folder?')
@@ -174,12 +174,12 @@ class JRC2013VisWidget:
       val = msgBox.exec_()
       if(val == qt.QMessageBox.Yes):
         print 'Yes'
-        dicomFilesDirectory = qt.QFileDialog.getExistingDirectory(None, 'Select DCMTK dataset1_dcmtk-db directory')
+        dicomFilesDirectory = qt.QFileDialog.getExistingDirectory(None, 'Select DCMTK database folder')
         configFilePath = dicomFilesDirectory + '/dcmqrscp.cfg'
         processCurrentPath = dicomFilesDirectory
       else:
         downloads = ( 
-          ('http://slicer.kitware.com/midas3/download?items=18040', 'dicom-db.zip'),
+          ('http://slicer.kitware.com/midas3/download?items=18822', 'Dcmtk-db.zip'),
           )
         print 'Downloading'
       
@@ -343,7 +343,7 @@ class JRC2013VisTest(unittest.TestCase):
     #
     import urllib
     downloads = ( 
-        ('http://slicer.kitware.com/midas3/download?items=18040', 'dicom-db.zip'),
+        ('http://slicer.kitware.com/midas3/download?items=18822', 'Dcmtk-db.zip'),
         )
 
     self.delayDisplay("Downloading")
@@ -375,8 +375,8 @@ class JRC2013VisTest(unittest.TestCase):
       self.delayDisplay('Start Local DICOM Q/R SCP')
       import subprocess
       import os
-      configFilePath = dicomFilesDirectory + '/dicom-db/dcmqrscp.cfg'
-      processCurrentPath = dicomFilesDirectory + '/dicom-db/'
+      configFilePath = dicomFilesDirectory + '/Dcmtk-db/dcmqrscp.cfg'
+      processCurrentPath = dicomFilesDirectory + '/Dcmtk-db/'
       
       dcmqrscpExeOptions = (
         '/bin', 
