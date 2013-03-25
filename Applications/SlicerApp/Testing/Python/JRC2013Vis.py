@@ -189,7 +189,7 @@ class JRC2013VisWidget:
       dcmqrscpExeOptions = (
         '/bin', 
         '/../CTK-build/CMakeExternals/Install/bin',
-        '/../DCMTK-build/bin',
+        '/../DCMTK-install/bin',
         )
       
       dcmqrscpExePath = None
